@@ -41,7 +41,17 @@ C:/Users/YOURUSERHERE/Downloads/opencv/build/java/x64/opencv_java401.dll
 C:/Users/YOURUSERHERE/Downloads/openjfx-11.0.2_windows-x64_bin-sdk/javafx-sdk-11.0.2\lib
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+Last, you need to edit the VM configurations for your IDE, so that when Java is started, the IDE points it to JavaFX's location.
+
+Eclipse (first answer, not comment):
+https://stackoverflow.com/questions/15313393/how-to-increase-application-heap-size-in-eclipse 
+IntelliJ (first answer, not comment):
+https://stackoverflow.com/questions/50938383/how-to-set-jvm-arguments-in-intellij-idea
+
+The argument you need to add is this (change the file path to where your javaFX /lib folder is):
+```
+--module-path D:\openjfx-11.0.2_windows-x64_bin-sdk\javafx-sdk-11.0.2\lib --add-modules=javafx.controls,javafx.fxml
+```
 
 ## Running
 You should now be able to run it by running the main method inside FaceDetection.java. Make sure you have a webcam connected.

@@ -1,6 +1,6 @@
 package sample;
 
-import org.opencv.core.Core;
+import org.opencv.core.*;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -9,6 +9,11 @@ import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
+import org.opencv.objdetect.Objdetect;
+
+import java.time.LocalDateTime;
 
 /**
  * The main class for a JavaFX application. It creates and handle the main
@@ -43,11 +48,12 @@ public class FaceDetection extends Application
 			primaryStage.setScene(scene);
 			// show the GUI
 			primaryStage.show();
-			
+
 			// init the controller
 			FaceDetectionController controller = loader.getController();
 			controller.init();
-			
+
+			Engine dataEngine = new Engine();
 			// set the proper behavior on closing the application
 			primaryStage.setOnCloseRequest((new EventHandler<WindowEvent>() {
 				public void handle(WindowEvent we)
@@ -55,18 +61,51 @@ public class FaceDetection extends Application
 					controller.setClosed();
 				}
 			}));
+
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
-	
+
+
+
+
+	public static void detect(Mat frame, int absoluteFaceSize, CascadeClassifier faceCascade, Engine dataEngine, String className, String classNum, LocalDateTime date) {
+		MatOfRect faces = new MatOfRect();
+		Mat grayFrame = new Mat();
+
+		// convert the frame in gray scale
+		Imgproc.cvtColor(frame, grayFrame, Imgproc.COLOR_BGR2GRAY);
+		// equalize the frame histogram to improve the result
+		Imgproc.equalizeHist(grayFrame, grayFrame);
+
+		// compute minimum face size (20% of the frame height, in our case)
+		if (absoluteFaceSize == 0) {
+			int height = grayFrame.rows();
+			if (Math.round(height * 0.05f) > 0) {
+				absoluteFaceSize = Math.round(height * 0.05f);
+			}
+		}
+
+		// detect faces
+		faceCascade.detectMultiScale(grayFrame, faces, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,
+				new Size(absoluteFaceSize, absoluteFaceSize), new Size());
+
+		// each rectangle in faces is a face: draw them!
+		Rect[] facesArray = faces.toArray();
+		for (int i = 0; i < facesArray.length; i++) {
+			Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0), 3);
+		}
+		dataEngine.newData(facesArray.length, className, classNum, date);
+	}
+
 	public static void main(String[] args)
 	{
 		// load the native OpenCV library
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
 		launch(args);
+		Engine dataEngine = new Engine();
 	}
 }

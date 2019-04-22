@@ -39,6 +39,7 @@ Here's the different paths you need to add for both:
 C:/Users/YOURUSERHERE/Downloads/opencv/build/java/opencv-401.jar
 C:/Users/YOURUSERHERE/Downloads/opencv/build/java/x64/opencv_java401.dll
 C:/Users/YOURUSERHERE/Downloads/openjfx-11.0.2_windows-x64_bin-sdk/javafx-sdk-11.0.2\lib
+C:/Users/WHATEVERPATHTOPROJECT/AutomatedAttendance/mysql-connector-java-8.0.15
 ```
 
 Last, you need to edit the VM configurations for your IDE, so that when Java is started, the IDE points it to JavaFX's location.
